@@ -1,0 +1,183 @@
+{
+  "status": "ready",
+  "name": "TF-IDF + Logistic Regression",
+  "source_name": "NHTSA ODI Consumer Complaints",
+  "source_url": "https://www.nhtsa.gov/nhtsa-datasets-and-apis#complaints",
+  "archive_url": "https://static.nhtsa.gov/odi/ffdd/cmpl/COMPLAINTS_RECEIVED_2020-2024.zip",
+  "archive_sha256": "2e8f7d2d39beed77eda020625ec65e4f5fb7b5abf7abc309958fdb4d34a338b6",
+  "data_dictionary_url": "https://static.nhtsa.gov/odi/ffdd/cmpl/CMPL.txt",
+  "data_period": "2020–2024",
+  "language": "en",
+  "target": "Категория компонента из жалобы владельца",
+  "classes": [
+    {
+      "id": "brakes",
+      "label": "Тормозная система"
+    },
+    {
+      "id": "electrical",
+      "label": "Электрооборудование"
+    },
+    {
+      "id": "engine",
+      "label": "Двигатель и охлаждение"
+    },
+    {
+      "id": "fuel",
+      "label": "Топливная система"
+    },
+    {
+      "id": "powertrain",
+      "label": "Трансмиссия"
+    },
+    {
+      "id": "steering",
+      "label": "Рулевое управление"
+    },
+    {
+      "id": "suspension",
+      "label": "Подвеска и колёса"
+    }
+  ],
+  "train_size": 19600,
+  "validation_size": 4900,
+  "test_size": 6238,
+  "accuracy": 0.8702,
+  "macro_f1": 0.871,
+  "top3_accuracy": 0.9697,
+  "baseline_accuracy": 0.1443,
+  "validation_macro_f1": {
+    "logistic_regression": 0.8653,
+    "random_forest": 0.8322
+  },
+  "test_per_class": {
+    "brakes": {
+      "precision": 0.9530355097365406,
+      "recall": 0.9244444444444444,
+      "f1-score": 0.9385222786238014,
+      "support": 900.0
+    },
+    "electrical": {
+      "precision": 0.7724068479355488,
+      "recall": 0.8522222222222222,
+      "f1-score": 0.8103539355520338,
+      "support": 900.0
+    },
+    "engine": {
+      "precision": 0.7779083431257344,
+      "recall": 0.7355555555555555,
+      "f1-score": 0.7561393489434609,
+      "support": 900.0
+    },
+    "fuel": {
+      "precision": 0.8922902494331065,
+      "recall": 0.8744444444444445,
+      "f1-score": 0.8832772166105499,
+      "support": 900.0
+    },
+    "powertrain": {
+      "precision": 0.8309232480533927,
+      "recall": 0.83,
+      "f1-score": 0.830461367426348,
+      "support": 900.0
+    },
+    "steering": {
+      "precision": 0.9551357733175915,
+      "recall": 0.9352601156069364,
+      "f1-score": 0.9450934579439252,
+      "support": 865.0
+    },
+    "suspension": {
+      "precision": 0.9227323628219485,
+      "recall": 0.9438717067583047,
+      "f1-score": 0.9331823329558324,
+      "support": 873.0
+    },
+    "accuracy": 0.8701506893235011,
+    "macro avg": {
+      "precision": 0.8720617620605519,
+      "recall": 0.8708283555759869,
+      "f1-score": 0.871004276865136,
+      "support": 6238.0
+    },
+    "weighted avg": {
+      "precision": 0.8713763345814632,
+      "recall": 0.8701506893235011,
+      "f1-score": 0.8703194533877062,
+      "support": 6238.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      832,
+      25,
+      10,
+      9,
+      9,
+      3,
+      12
+    ],
+    [
+      13,
+      767,
+      66,
+      25,
+      17,
+      7,
+      5
+    ],
+    [
+      7,
+      97,
+      662,
+      44,
+      77,
+      6,
+      7
+    ],
+    [
+      4,
+      31,
+      45,
+      787,
+      29,
+      0,
+      4
+    ],
+    [
+      11,
+      53,
+      56,
+      13,
+      747,
+      5,
+      15
+    ],
+    [
+      3,
+      13,
+      5,
+      2,
+      7,
+      809,
+      26
+    ],
+    [
+      3,
+      7,
+      7,
+      2,
+      13,
+      17,
+      824
+    ]
+  ],
+  "model_groups": {
+    "train": 690,
+    "validation": 203,
+    "test": 247
+  },
+  "sklearn_version": "1.7.2",
+  "random_seed": 42,
+  "note": "Английские жалобы владельцев в США. Выборки разделены по марке и модели автомобиля. Качество на русских описаниях и Haval отдельно не измерялось."
+}

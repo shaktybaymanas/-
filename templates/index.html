@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7f6">
+  <title>AI Car Doctor — диагностика автомобиля</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+  <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Разделы приложения">
+      <a class="brand" href="#diagnosis" data-page="diagnosis">
+        <span class="brand-icon" data-icon="brand"></span>
+        <span><strong>AI Car Doctor</strong><small>Автодиагностика</small></span>
+      </a>
+      <nav class="menu" aria-label="Основная навигация">
+        <a class="menu-link is-active" href="#diagnosis" data-page="diagnosis" aria-current="page"><span data-icon="stethoscope"></span>Диагностика</a>
+        <a class="menu-link" href="#prediction" data-page="prediction"><span data-icon="trend"></span>Прогноз</a>
+        <a class="menu-link" href="#assistant" data-page="assistant"><span data-icon="message"></span>AI-ассистент</a>
+        <a class="menu-link" href="#history" data-page="history"><span data-icon="history"></span>История</a>
+        <a class="menu-link" href="#model" data-page="model"><span data-icon="layers"></span>О модели</a>
+      </nav>
+      <aside class="sidebar-note">
+        <span data-icon="lock" class="sidebar-note-icon"></span>
+        <div><strong>Локальная история</strong><p>Проверки хранятся на этом компьютере.</p></div>
+      </aside>
+    </aside>
+
+    <main class="workspace" id="main">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>Рабочая область</span><span data-icon="chevron"></span><strong id="location-name">Диагностика</strong></div>
+        <span class="status-badge"><span></span>Учебный прототип</span>
+      </header>
+
+      <section class="page" id="page-diagnosis" aria-labelledby="diagnosis-title">
+        <div class="hero">
+          <div class="hero-image" aria-hidden="true"></div>
+          <div class="hero-content">
+            <span class="hero-label"><span data-icon="activity"></span> AI CAR DOCTOR</span>
+            <h1 id="diagnosis-title">Диагностика<br>автомобиля</h1>
+            <p>Опишите симптомы или загрузите данные, чтобы понять, что проверить в первую очередь.</p>
+          </div>
+        </div>
+
+        <div class="diagnosis-tools">
+          <h2>Способ диагностики</h2>
+          <div class="tabs" role="tablist" aria-label="Способ диагностики">
+            <button type="button" role="tab" id="tab-symptoms" aria-controls="panel-symptoms" aria-selected="true" data-mode="symptoms"><span data-icon="stethoscope"></span>Симптомы</button>
+            <button type="button" role="tab" id="tab-dtc" aria-controls="panel-dtc" aria-selected="false" tabindex="-1" data-mode="dtc"><span data-icon="code"></span>OBD-II коды</button>
+            <button type="button" role="tab" id="tab-audio" aria-controls="panel-audio" aria-selected="false" tabindex="-1" data-mode="audio"><span data-icon="audio"></span>Звук</button>
+            <button type="button" role="tab" id="tab-fuel" aria-controls="panel-fuel" aria-selected="false" tabindex="-1" data-mode="fuel"><span data-icon="fuel"></span>Расход топлива</button>
+            <button type="button" role="tab" id="tab-telemetry" aria-controls="panel-telemetry" aria-selected="false" tabindex="-1" data-mode="telemetry"><span data-icon="gauge"></span>Телеметрия</button>
+          </div>
+        </div>
+
+        <div class="columns diagnosis-columns">
+          <div class="card input-card">
+            <div id="panel-symptoms" role="tabpanel" aria-labelledby="tab-symptoms">
+              <header class="card-header">
+                <div class="card-heading"><span class="icon-tile" data-icon="car"></span><div><h2>Данные автомобиля</h2><p>Заполните сведения и опишите проблему.</p></div></div>
+                <button type="button" class="text-button" data-example="symptoms"><span data-icon="spark"></span>Заполнить пример</button>
+              </header>
+              <form class="form check-form" id="symptoms-form" data-endpoint="diagnose" data-result="diagnosis">
+                <div class="field-grid">
+                  <label>Марка <input name="make" list="makes" maxlength="60" placeholder="Haval" autocomplete="off"></label>
+                  <label>Модель <input name="model" maxlength="60" placeholder="M6" autocomplete="off"></label>
+                  <label>Год выпуска <input name="year" type="number" min="1886" placeholder="2024" inputmode="numeric"></label>
+                  <label>Двигатель <input name="engine" maxlength="60" placeholder="1.5 Turbo" autocomplete="off"></label>
+                </div>
+                <datalist id="makes"><option value="Haval"><option value="Hyundai"><option value="Kia"><option value="Toyota"><option value="Volkswagen"><option value="Ford"><option value="Honda"><option value="Nissan"><option value="Renault"><option value="Škoda"></datalist>
+                <label>Основной симптом <span class="required" aria-hidden="true">*</span><textarea name="symptoms" rows="3" maxlength="1600" placeholder="Например, при запуске двигателя слышен стук" required></textarea></label>
+                <label>Дополнительные симптомы <span class="optional">необязательно</span><input name="additional" maxlength="600" placeholder="Например, вырос расход топлива"></label>
+                <label>Код OBD-II <span class="optional">необязательно</span><input name="dtc" maxlength="5" class="code-input" placeholder="P0301" autocomplete="off" spellcheck="false"></label>
+                <button class="primary" type="submit"><span data-icon="scan"></span>Начать диагностику</button>
+                <p class="error" role="alert" hidden></p>
+              </form>
+            </div>
+
+            <div id="panel-dtc" role="tabpanel" aria-labelledby="tab-dtc" hidden>
+              <header class="card-header"><div class="card-heading"><span class="icon-tile" data-icon="code"></span><div><h2>Код OBD-II</h2><p>Введите код, считанный сканером.</p></div></div><button type="button" class="text-button" data-example="dtc">Вставить P0301</button></header>
+              <form class="form check-form" data-endpoint="dtc" data-result="diagnosis">
+                <label>Диагностический код <span class="required" aria-hidden="true">*</span><input class="code-input" name="code" maxlength="5" placeholder="P0301" autocomplete="off" spellcheck="false" required></label>
+                <button class="primary" type="submit"><span data-icon="search"></span>Расшифровать код</button><p class="error" role="alert" hidden></p>
+              </form>
+            </div>
+
+            <div id="panel-audio" role="tabpanel" aria-labelledby="tab-audio" hidden>
+              <header class="card-header"><div class="card-heading"><span class="icon-tile" data-icon="audio"></span><div><h2>Звук двигателя</h2><p>Загрузите запись для анализа сигнала.</p></div></div></header>
+              <form class="form check-form" data-endpoint="audio" data-result="diagnosis" enctype="multipart/form-data">
+                <label class="upload"><span class="upload-icon" data-icon="upload"></span><strong>Выберите WAV-файл</strong><span>Запись в формате PCM WAV</span><input type="file" name="file" accept=".wav,audio/wav,audio/x-wav" required><output class="file-name"></output></label>
+                <a class="download-link" href="{{ url_for('static', filename='sample-signal.wav') }}" download><span data-icon="download"></span>Скачать тестовый WAV</a>
+                <button class="primary" type="submit"><span data-icon="audio"></span>Измерить параметры звука</button><p class="error" role="alert" hidden></p>
+              </form>
+            </div>
+
+            <div id="panel-fuel" role="tabpanel" aria-labelledby="tab-fuel" hidden>
+              <header class="card-header"><div class="card-heading"><span class="icon-tile" data-icon="fuel"></span><div><h2>Расход топлива</h2><p>Сравните поездки в похожих условиях.</p></div></div><button type="button" class="text-button" data-example="fuel">Заполнить пример</button></header>
+              <form class="form check-form" data-endpoint="fuel" data-result="diagnosis">
+                <div class="field-grid"><label>Текущий расход, л/100 км <span class="required" aria-hidden="true">*</span><input name="actual" type="number" min="0.1" max="100" step="0.1" placeholder="10.8" required></label><label>Обычный расход, л/100 км <span class="optional">необязательно</span><input name="baseline" type="number" min="0.1" max="100" step="0.1" placeholder="8.7"></label></div><p class="field-hint">Если поле пустое, сравнение использует предыдущие показания из истории.</p>
+                <button class="primary" type="submit"><span data-icon="gauge"></span>Сравнить расход</button><p class="error" role="alert" hidden></p>
+              </form>
+            </div>
+
+            <div id="panel-telemetry" role="tabpanel" aria-labelledby="tab-telemetry" hidden>
+              <header class="card-header"><div class="card-heading"><span class="icon-tile" data-icon="gauge"></span><div><h2>Телеметрия поездки</h2><p>Импортируйте журнал с OBD-II адаптера.</p></div></div></header>
+              <form class="form check-form" data-endpoint="telemetry" data-result="diagnosis" enctype="multipart/form-data">
+                <label class="upload"><span class="upload-icon" data-icon="upload"></span><strong>Выберите CSV-файл</strong><span>Время, обороты, температура и скорость</span><input name="file" type="file" accept=".csv,text/csv" required><output class="file-name"></output></label>
+                <a class="download-link" href="{{ url_for('static', filename='sample-telemetry.csv') }}" download><span data-icon="download"></span>Скачать демонстрационный CSV</a>
+                <button class="primary" type="submit"><span data-icon="activity"></span>Открыть журнал</button><p class="error" role="alert" hidden></p>
+              </form>
+            </div>
+          </div>
+
+          <div class="card result-card" data-result-card="diagnosis">
+            <header class="card-header result-header"><div class="card-heading"><span class="icon-tile" data-icon="report"></span><div><h2>Результат анализа</h2><p>Данные и вопросы для проверки</p></div></div></header>
+            <div class="result-body" id="result-diagnosis" aria-live="polite"></div>
+            <div class="result-note"><span data-icon="info"></span><p>Результаты предназначены для предварительной оценки. Диагноз подтверждает специалист.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-prediction" aria-labelledby="prediction-title" hidden>
+        <header class="section-intro"><h1 id="prediction-title">Прогноз по телеметрии</h1><p>Оцените, как может измениться температура охлаждающей жидкости при сохранении текущего тренда.</p></header>
+        <div class="columns">
+          <div class="card input-card"><header class="card-header"><div class="card-heading"><span class="icon-tile" data-icon="trend"></span><div><h2>Данные поездки</h2><p>Загрузите CSV или используйте последний импорт.</p></div></div></header>
+            <form class="form check-form" data-endpoint="prediction" data-result="prediction" enctype="multipart/form-data">
+              <label class="upload"><span class="upload-icon" data-icon="upload"></span><strong>Выберите CSV-файл</strong><span>Без файла используется предыдущий журнал</span><input name="file" type="file" accept=".csv,text/csv"><output class="file-name"></output></label>
+              <a class="download-link" href="{{ url_for('static', filename='sample-telemetry.csv') }}" download><span data-icon="download"></span>Скачать демонстрационный CSV</a>
+              <button class="primary" type="submit"><span data-icon="trend"></span>Рассчитать тренд</button><p class="error" role="alert" hidden></p>
+            </form>
+          </div>
+          <div class="card result-card" data-result-card="prediction"><header class="card-header"><div class="card-heading"><span class="icon-tile" data-icon="report"></span><div><h2>Оценка тренда</h2><p>Краткосрочная экстраполяция</p></div></div></header><div class="result-body" id="result-prediction" aria-live="polite"></div><div class="result-note"><span data-icon="info"></span><p>Тренд описывает текущий ряд измерений. Для модели отказов нужны журналы с размеченными поломками.</p></div></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-assistant" aria-labelledby="assistant-title" hidden>
+        <header class="section-intro"><h1 id="assistant-title">AI-ассистент</h1><p>Разберите диагностический код или термин простыми словами.</p></header>
+        <div class="columns">
+          <div class="card input-card"><header class="card-header"><div class="card-heading"><span class="icon-tile" data-icon="message"></span><div><h2>Справочник</h2><p>Выберите пример или задайте свой вопрос.</p></div></div></header>
+            <form class="form check-form" data-endpoint="assistant" data-result="assistant"><div class="quick-questions" aria-label="Примеры вопросов"><button type="button" data-question="Что значит P0301?">Что значит P0301?</button><button type="button" data-question="Что такое температура охлаждающей жидкости?">Температура двигателя</button><button type="button" data-question="Что такое OBD-II?">Что такое OBD-II?</button></div><label>Вопрос <span class="required" aria-hidden="true">*</span><textarea name="issue" rows="4" maxlength="500" placeholder="Например, что такое пропуски зажигания?" required></textarea></label><button class="primary" type="submit"><span data-icon="message"></span>Объяснить</button><p class="error" role="alert" hidden></p></form>
+          </div>
+          <div class="card result-card" data-result-card="assistant"><header class="card-header"><div class="card-heading"><span class="icon-tile" data-icon="spark"></span><div><h2>Объяснение</h2><p>Локальный автомобильный справочник</p></div></div></header><div class="result-body" id="result-assistant" aria-live="polite"></div></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-history" aria-labelledby="history-title" hidden>
+        <header class="section-intro"><h1 id="history-title">История проверок</h1><p>Откройте сохранённый результат анализа.</p></header>
+        <div class="columns"><div class="card input-card" id="history-list" aria-live="polite"></div><div class="card result-card" data-result-card="history"><header class="card-header"><div class="card-heading"><span class="icon-tile" data-icon="report"></span><div><h2>Результат проверки</h2></div></div></header><div class="result-body" id="result-history" aria-live="polite"></div></div></div>
+      </section>
+
+      <section class="page" id="page-model" aria-labelledby="model-title" hidden>
+        <header class="section-intro"><h1 id="model-title">Модель диагностики</h1><p>Данные обучения и результаты на отложенных обращениях.</p></header>
+        <div class="card model-card" id="model-content" aria-live="polite"></div>
+      </section>
+      <footer class="footer"><span>AI Car Doctor</span><a href="#model" data-page="model">Данные и методика</a></footer>
+    </main>
+  </div>
+</body>
+</html>

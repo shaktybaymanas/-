@@ -1,0 +1,6 @@
+.venv/
+runtime/
+instance/
+__pycache__/
+*.py[cod]
+/nhtsa-2020-2024.zip
